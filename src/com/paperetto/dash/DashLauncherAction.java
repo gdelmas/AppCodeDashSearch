@@ -6,7 +6,6 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
@@ -17,12 +16,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class DashLauncherAction extends AnAction {
-    private KeywordLookup keywordLookup;
+    private KeywordLookup keywordLookup = KeywordLookup.getInstance();
     private String fileType = null;
 
     public DashLauncherAction()
     {
-        keywordLookup = new KeywordLookup();
     }
 
 

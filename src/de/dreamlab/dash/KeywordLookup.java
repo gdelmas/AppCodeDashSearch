@@ -6,6 +6,9 @@ import com.intellij.openapi.application.ApplicationInfo;
 import java.util.HashMap;
 
 public class KeywordLookup {
+
+	private static KeywordLookup INSTANCE = new KeywordLookup();
+
     private static String CONFIG_KEYWORDS = "DASH_PLUGIN_KEYWORDS";
     private static String DEFAULT_KEYWORDS = "ActionScript=actionscript;C++=cpp;CoffeeScript=coffee;Perl=perl;CSS=css;Erlang=erlang;Haskell=haskell;HTML=html;JAVA=java7;CLASS=java7;JavaScript=javascript;LESS=less;PHP=php;SASS=sass;Ruby=ruby";
     private static final String ANDROID_STUDIO_PRODUCT_CODE = "AI";
@@ -13,7 +16,7 @@ public class KeywordLookup {
     private HashMap<String, String> typeMap;
     private HashMap<String, String> extensionMap;
 
-    public KeywordLookup()
+    private KeywordLookup()
     {
         initDefaults();
 
@@ -84,4 +87,8 @@ public class KeywordLookup {
 
         return type;
     }
+
+	public static KeywordLookup getInstance() {
+		return INSTANCE;
+	}
 }
