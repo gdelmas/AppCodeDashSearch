@@ -16,13 +16,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class DashLauncherAction extends AnAction {
-    private KeywordLookup keywordLookup = KeywordLookup.getInstance();
+    private KeywordLookup keywordLookup;
     private String fileType = null;
 
-    public DashLauncherAction()
-    {
+    public DashLauncherAction() {
+		keywordLookup = KeywordLookup.getInstance();
     }
-
 
     @Override
     public void update(AnActionEvent e) {

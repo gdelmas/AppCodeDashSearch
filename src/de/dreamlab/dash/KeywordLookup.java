@@ -4,13 +4,15 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationInfo;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class KeywordLookup {
 
 	private static KeywordLookup INSTANCE = new KeywordLookup();
 
-    private static String CONFIG_KEYWORDS = "DASH_PLUGIN_KEYWORDS";
-    private static String DEFAULT_KEYWORDS = "ActionScript=actionscript;C++=cpp;CoffeeScript=coffee;Perl=perl;CSS=css;Erlang=erlang;Haskell=haskell;HTML=html;JAVA=java7;CLASS=java7;JavaScript=javascript;LESS=less;PHP=php;SASS=sass;Ruby=ruby";
+    private static final String CONFIG_KEYWORDS = "DASH_PLUGIN_KEYWORDS";
+    private static final String DEFAULT_KEYWORDS = "ActionScript=actionscript;C++=cpp;CoffeeScript=coffee;Perl=perl;CSS=css;Erlang=erlang;Haskell=haskell;HTML=html;JAVA=java7;CLASS=java7;JavaScript=javascript;LESS=less;PHP=php;SASS=sass;Ruby=ruby";
     private static final String ANDROID_STUDIO_PRODUCT_CODE = "AI";
 
     private HashMap<String, String> typeMap;
@@ -56,18 +58,45 @@ public class KeywordLookup {
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
 
         if ( !propertiesComponent.isValueSet(CONFIG_KEYWORDS) ) {
-            // If it's Android Studio, use the Android docset instead of Java's.
-            if (ANDROID_STUDIO_PRODUCT_CODE.equals(
-                ApplicationInfo.getInstance().getBuild().getProductCode())) {
-
-                    // Really revolting hack but it gets the job done.
-                    propertiesComponent.setValue(CONFIG_KEYWORDS,
-                        DEFAULT_KEYWORDS.replace("JAVA=java;", "JAVA=android;"));
-            } else {
-                propertiesComponent.setValue(CONFIG_KEYWORDS, DEFAULT_KEYWORDS);
-            }
+			resetDefaults();
         }
     }
+
+	public void resetDefaults() {
+		PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+
+		// If it's Android Studio, use the Android docset instead of Java's.
+		if (ANDROID_STUDIO_PRODUCT_CODE.equals(
+				ApplicationInfo.getInstance().getBuild().getProductCode())) {
+
+			// Really revolting hack but it gets the job done.
+			propertiesComponent.setValue(CONFIG_KEYWORDS,
+					DEFAULT_KEYWORDS.replace("JAVA=java;", "JAVA=android;"));
+		} else {
+			propertiesComponent.setValue(CONFIG_KEYWORDS, DEFAULT_KEYWORDS);
+		}
+	}
+
+	public void updateValues() {
+		StringBuffer outputValue = new StringBuffer();
+		for (Entry<String, String> type : typeMap.entrySet()) {
+			outputValue.append(String.format("%s=%s;", type.getKey(), type.getValue()));
+		}
+		for (Entry<String, String> extension : extensionMap.entrySet()) {
+			outputValue.append(String.format("%s=%s;", extension.getKey(), extension.getValue()));
+		}
+
+		PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+		propertiesComponent.setValue(CONFIG_KEYWORDS, outputValue.toString());
+	}
+
+	public TreeMap<String, String> getValues() {
+		TreeMap<String, String> output = new TreeMap<String, String>();
+		output.putAll(typeMap);
+		output.putAll(extensionMap);
+
+		return output;
+	}
 
     public String findKeyword(String type, String extension)
     {
