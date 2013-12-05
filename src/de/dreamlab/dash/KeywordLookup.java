@@ -2,8 +2,11 @@ package de.dreamlab.dash;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationInfo;
+import it.frob.dash.DocsetMapping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -88,6 +91,16 @@ public class KeywordLookup {
 
 		PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
 		propertiesComponent.setValue(CONFIG_KEYWORDS, outputValue.toString());
+	}
+
+	public List<DocsetMapping> getList() {
+		List<DocsetMapping> list = new ArrayList<DocsetMapping>();
+
+		for (Entry<String, String> entries : getValues().entrySet()) {
+			list.add(new DocsetMapping(entries.getKey(), entries.getValue()));
+		}
+
+		return list;
 	}
 
 	public TreeMap<String, String> getValues() {
