@@ -1,9 +1,11 @@
 package com.paperetto.dash;
 
-
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.util.ExecUtil;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -18,6 +20,7 @@ import java.net.URLEncoder;
 public class DashLauncherAction extends AnAction {
 
 	private final static String RUBY_FILE_IDENTIFIER = "Ruby";
+	private final static String NOTIFICATION_DISPLAY_ID = "Dash Notifications";
 
     private KeywordLookup keywordLookup;
     private String fileType;
@@ -30,8 +33,6 @@ public class DashLauncherAction extends AnAction {
     public void update(AnActionEvent e) {
         e.getPresentation().setEnabled(PlatformDataKeys.EDITOR.getData(e.getDataContext()) != null);
     }
-
-
 
     private String getWordAtCursor(CharSequence editorText, int cursorOffset) {
         int editorTextLength = editorText.length();
@@ -96,13 +97,14 @@ public class DashLauncherAction extends AnAction {
             // search word
             String searchWord;
             try {
-                searchWord = URLEncoder.encode(word, "UTF-8");
-            } catch (UnsupportedEncodingException el){
-                ///where do I print an error
-                return;
+                searchWord = URLEncoder.encode(word, "UTF-8").replace("+", "%20");
+            } catch (UnsupportedEncodingException exception) {
+				// TODO: Localisation
+				Notifications.Bus.notify(new Notification(NOTIFICATION_DISPLAY_ID,
+						"Unable to query Dash", exception.getLocalizedMessage(),
+						NotificationType.ERROR));
+				return;
             }
-            //URLEncoder turns spaces in to '+' we need them to be %20
-            searchWord = searchWord.replace("+", "%20");
 
             String request = "dash://";
 
@@ -118,11 +120,11 @@ public class DashLauncherAction extends AnAction {
                 final GeneralCommandLine commandLine = new GeneralCommandLine(command);
                 commandLine.addParameter(request);
                 commandLine.createProcess();
-
-            }
-            catch (ExecutionException ee) {
-                ///where do I print an error
-                return;
+            } catch (ExecutionException exception) {
+				Notifications.Bus.notify(new Notification(NOTIFICATION_DISPLAY_ID,
+						"Unable to query Dash", exception.getLocalizedMessage(),
+						NotificationType.ERROR));
+				return;
             }
         }
     }
