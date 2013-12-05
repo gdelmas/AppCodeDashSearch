@@ -62,15 +62,17 @@ public class DashLauncherAction extends AnAction {
         return null;
     }
 
-    public void actionPerformed(AnActionEvent e) {
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+    public void actionPerformed(AnActionEvent actionEvent) {
+        VirtualFile virtualFile = actionEvent.getData(PlatformDataKeys.VIRTUAL_FILE);
 		if (virtualFile != null) {
 			fileType = keywordLookup.cleanType(virtualFile.getFileType().getName());
 		}
 
-        Editor editor = PlatformDataKeys.EDITOR.getData(e.getDataContext());
+        Editor editor = PlatformDataKeys.EDITOR.getData(actionEvent.getDataContext());
+		if (editor == null) {
+			return;
+		}
 
-        //Editor editor = DataKeys.EDITOR.getData(e.getDataContext());
         int offset = editor.getCaretModel().getOffset();
         CharSequence editorText = editor.getDocument().getCharsSequence();
 
