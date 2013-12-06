@@ -43,15 +43,8 @@ class ConfigurationPanel extends AddEditRemovePanel<DocsetMapping> {
 
 	@Override
 	protected boolean removeItem(DocsetMapping docsetMapping) {
-		List<DocsetMapping> data = getData();
-
-		if (data.contains(docsetMapping)) {
-			modified |= true;
-			data.remove(docsetMapping);
-			return true;
-		}
-
-		return false;
+		modified |= true;
+		return true;
 	}
 
 	@Nullable

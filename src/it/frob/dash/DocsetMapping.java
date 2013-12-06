@@ -61,4 +61,13 @@ public class DocsetMapping {
 	public void setDocset(String docsetMapping) {
 		docset = docsetMapping;
 	}
+
+	/**
+	 * Returns whether the docset is for an extension.
+	 *
+	 * @return if the docset is for an extension.
+	 */
+	public boolean isExtension() {
+		return type.startsWith(".");
+	}
 }

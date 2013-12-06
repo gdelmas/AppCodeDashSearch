@@ -53,6 +53,9 @@ class Configuration implements Configurable {
 
 	@Override
 	public void apply() throws ConfigurationException {
+		KeywordLookup keywordLookup = KeywordLookup.getInstance();
+		keywordLookup.updateValues(configurationPanel.getData());
+		keywordLookup.writeValues();
 		configurationPanel.clearModified();
 	}
 
