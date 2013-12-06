@@ -49,17 +49,6 @@ class MappingEditorDialog extends DialogWrapper {
 	};
 
 	/**
-	 * Constructor for adding mappings.
-	 */
-	private MappingEditorDialog() {
-		super(true);
-
-		setTitle(resourceBundle.getString("dialog.addnew"));
-		setupUi("", "");
-		getOKAction().setEnabled(false);
-	}
-
-	/**
 	 * Constructor for editing existing mappings.
 	 *
 	 * @param type the mapping type string.
@@ -70,18 +59,6 @@ class MappingEditorDialog extends DialogWrapper {
 
 		setTitle(resourceBundle.getString("dialog.edit"));
 		setupUi(type, docset);
-	}
-
-	/**
-	 * Constructor for editing existing mappings.
-	 *
-	 * @param mapping the mapping to base edit operations on.
-	 */
-	private MappingEditorDialog(DocsetMapping mapping) {
-		super(true);
-
-		setTitle(resourceBundle.getString("dialog.edit"));
-		setupUi(mapping.getType(), mapping.getDocset());
 	}
 
 	/**

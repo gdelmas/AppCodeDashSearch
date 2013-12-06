@@ -16,13 +16,6 @@ public class DocsetMapping {
 	private String docset;
 
 	/**
-	 * Default constructor.
-	 */
-	public DocsetMapping() {
-		this("", "");
-	}
-
-	/**
 	 * Specialised constructor for already known values.
 	 *
 	 * @param typeMapping the type to associate a docset to.
