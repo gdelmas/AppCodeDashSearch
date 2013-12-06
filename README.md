@@ -13,18 +13,7 @@ uses the current selection for the search, or the caret position.
 
 ## Configuration
 The plugin will use the documents file type to determine which docset keyword to use in Dash.
-These associations are customizable in "~/Library/Preferences/%IDE_NAME%/options/options.xml" under the property "DASH_PLUGIN_KEYWORDS"
-%IDE_NAME% might be "WebIde60" or "IdeaIC12"
-
-Values pairs can be provided in a semi-colon delimited list. The value pair consists of FILE_TYPE=KEYWORD
-File type names can be found in the IDE settings. Instead of file types file extensions can be used. The file extension has to start with a dot.
-
-    ex: HTML=html;.xhtml=html
-      |           |
-      |          Uses Dash keyword "html" for files with
-      |          .xhtml extension (extensions have
-      |          priority over file types)
-     Uses Dash keyword "html" for files of type HTML
-
+These associations are customizable via the "Preferences" -> "IDE Settings" -> "Dash" configuration panel from inside the IDE.
+Types entered can either be file types (those can be found in the IDE settings) or extensions (must be prefixed with a dot, ie. ".html").
 
 Please feel free to request improvements, or fork-it and make them yourself!

@@ -57,6 +57,7 @@ Initially developed by <a href="http://www.linkedin.com/in/combinatorial">David 
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
+      <applicationConfigurable instance="it.frob.dash.Configuration">
+      </applicationConfigurable>
   </extensions>
 </idea-plugin>

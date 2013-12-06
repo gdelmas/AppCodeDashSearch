@@ -1,12 +1,13 @@
 package com.paperetto.dash;
 
-
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.util.ExecUtil;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
@@ -15,23 +16,31 @@ import de.dreamlab.dash.KeywordLookup;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ResourceBundle;
 
-public class DashLauncherAction extends AnAction {
+class DashLauncherAction extends AnAction {
+
+	/**
+	 * Localisable resources.
+	 */
+	private static ResourceBundle resourceBundle =
+			ResourceBundle.getBundle("it.frob.dash.Strings");
+
+	private final static String RUBY_FILE_IDENTIFIER = "Ruby";
+	private final static String NOTIFICATION_DISPLAY_ID = "Dash Notifications";
+
     private KeywordLookup keywordLookup;
-    private String fileType = null;
+    private String fileType;
 
-    public DashLauncherAction()
-    {
-        keywordLookup = new KeywordLookup();
+    public DashLauncherAction() {
+		keywordLookup = KeywordLookup.getInstance();
     }
-
 
     @Override
-    public void update(AnActionEvent e) {
-        e.getPresentation().setEnabled(PlatformDataKeys.EDITOR.getData(e.getDataContext()) != null);
+    public void update(AnActionEvent actionEvent) {
+        actionEvent.getPresentation().setEnabled(
+				PlatformDataKeys.EDITOR.getData(actionEvent.getDataContext()) != null);
     }
-
-
 
     private String getWordAtCursor(CharSequence editorText, int cursorOffset) {
         int editorTextLength = editorText.length();
@@ -61,83 +70,68 @@ public class DashLauncherAction extends AnAction {
         return null;
     }
 
-    public void actionPerformed(AnActionEvent e) {
-        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+    public void actionPerformed(AnActionEvent actionEvent) {
+        VirtualFile virtualFile = actionEvent.getData(PlatformDataKeys.VIRTUAL_FILE);
+		if (virtualFile != null) {
+			fileType = keywordLookup.cleanType(virtualFile.getFileType().getName());
+		}
 
-        if ( virtualFile != null ) {
-            fileType = keywordLookup.cleanType(virtualFile.getFileType().getName());
-        }
-        else {
-            fileType = null;
-        }
+        Editor editor = PlatformDataKeys.EDITOR.getData(actionEvent.getDataContext());
+		if (editor == null) {
+			return;
+		}
 
-
-        Editor editor = PlatformDataKeys.EDITOR.getData(e.getDataContext());
-
-        //Editor editor = DataKeys.EDITOR.getData(e.getDataContext());
         int offset = editor.getCaretModel().getOffset();
         CharSequence editorText = editor.getDocument().getCharsSequence();
 
-        String word = null;
-
         SelectionModel selectionModel = editor.getSelectionModel();
-        if(selectionModel.hasSelection())
-        {
-            word = selectionModel.getSelectedText();
+		String word = selectionModel.hasSelection() ?
+				selectionModel.getSelectedText() :
+				getWordAtCursor(editorText, offset);
+		if (word == null) {
+			return;
+		}
+
+        String keyword = null;
+
+        if (virtualFile != null) {
+            keyword = keywordLookup.findKeyword(virtualFile.getFileType().getName(),
+					virtualFile.getExtension());
+			if (keyword != null) {
+				keyword += ":";
+			} else {
+				keyword = "";
+			}
         }
-        else
-        {
-            word = getWordAtCursor(editorText,offset);
+
+        String searchWord;
+        try {
+            searchWord = URLEncoder.encode(word, "UTF-8").replace("+", "%20");
+        } catch (UnsupportedEncodingException exception) {
+			Notifications.Bus.notify(new Notification(NOTIFICATION_DISPLAY_ID,
+						resourceBundle.getString("error.invalidencoding"),
+						exception.getLocalizedMessage(),
+						NotificationType.ERROR));
+			return;
         }
 
-        if(word!=null) {
-            // keyword
-            String keyword = null;
-
-            if ( virtualFile != null) {
-                keyword = keywordLookup.findKeyword(virtualFile.getFileType().getName(), virtualFile.getExtension());
-            }
-
-            // search word
-            String searchWord;
-            try {
-                searchWord = URLEncoder.encode(word, "UTF-8");
-            } catch (UnsupportedEncodingException el){
-                ///where do I print an error
-                return;
-            }
-            //URLEncoder turns spaces in to '+' we need them to be %20
-            searchWord = searchWord.replace("+", "%20");
-
-            String request = "dash://";
-
-            if ( keyword != null ) {
-                request += keyword + ":";
-            }
-
-            request += searchWord;
-
-            //now open the URL with the 'open' command
-            String[] command = new String[]{ExecUtil.getOpenCommandPath()};
-            try {
-                final GeneralCommandLine commandLine = new GeneralCommandLine(command);
-                commandLine.addParameter(request);
-                commandLine.createProcess();
-
-            }
-            catch (ExecutionException ee) {
-                ///where do I print an error
-                return;
-            }
+        String[] command = new String[] {
+				ExecUtil.getOpenCommandPath()
+		};
+        try {
+            final GeneralCommandLine commandLine = new GeneralCommandLine(command);
+            commandLine.addParameter(String.format("dash://%s%s", keyword, searchWord));
+            commandLine.createProcess();
+        } catch (ExecutionException exception) {
+			Notifications.Bus.notify(new Notification(NOTIFICATION_DISPLAY_ID,
+					resourceBundle.getString("error.cannotexecute"),
+					exception.getLocalizedMessage(),
+					NotificationType.ERROR));
         }
     }
 
     private boolean isIdentifierPart(char ch) {
-        if ( fileType.equalsIgnoreCase("Ruby") ) {
-            return Character.isJavaIdentifierPart(ch) || ch == '?';
-        }
-        else {
-            return Character.isJavaIdentifierPart(ch);
-        }
+		return Character.isJavaIdentifierPart(ch) ||
+				(RUBY_FILE_IDENTIFIER.equalsIgnoreCase(fileType) && ch == '?');
     }
 }
