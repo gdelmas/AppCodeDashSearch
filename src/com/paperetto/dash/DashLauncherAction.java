@@ -18,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ResourceBundle;
 
-public class DashLauncherAction extends AnAction {
+class DashLauncherAction extends AnAction {
 
 	/**
 	 * Localisable resources.
@@ -84,59 +84,49 @@ public class DashLauncherAction extends AnAction {
         int offset = editor.getCaretModel().getOffset();
         CharSequence editorText = editor.getDocument().getCharsSequence();
 
-        String word = null;
-
         SelectionModel selectionModel = editor.getSelectionModel();
-        if(selectionModel.hasSelection())
-        {
-            word = selectionModel.getSelectedText();
+		String word = selectionModel.hasSelection() ?
+				selectionModel.getSelectedText() :
+				getWordAtCursor(editorText, offset);
+		if (word == null) {
+			return;
+		}
+
+        String keyword = null;
+
+        if (virtualFile != null) {
+            keyword = keywordLookup.findKeyword(virtualFile.getFileType().getName(),
+					virtualFile.getExtension());
+			if (keyword != null) {
+				keyword += ":";
+			} else {
+				keyword = "";
+			}
         }
-        else
-        {
-            word = getWordAtCursor(editorText,offset);
-        }
 
-        if(word!=null) {
-            // keyword
-            String keyword = null;
-
-            if (virtualFile != null) {
-                keyword = keywordLookup.findKeyword(virtualFile.getFileType().getName(), virtualFile.getExtension());
-            }
-
-            // search word
-            String searchWord;
-            try {
-                searchWord = URLEncoder.encode(word, "UTF-8").replace("+", "%20");
-            } catch (UnsupportedEncodingException exception) {
-				Notifications.Bus.notify(new Notification(NOTIFICATION_DISPLAY_ID,
+        String searchWord;
+        try {
+            searchWord = URLEncoder.encode(word, "UTF-8").replace("+", "%20");
+        } catch (UnsupportedEncodingException exception) {
+			Notifications.Bus.notify(new Notification(NOTIFICATION_DISPLAY_ID,
 						resourceBundle.getString("error.invalidencoding"),
 						exception.getLocalizedMessage(),
 						NotificationType.ERROR));
-				return;
-            }
+			return;
+        }
 
-            String request = "dash://";
-
-            if ( keyword != null ) {
-                request += keyword + ":";
-            }
-
-            request += searchWord;
-
-            //now open the URL with the 'open' command
-            String[] command = new String[]{ExecUtil.getOpenCommandPath()};
-            try {
-                final GeneralCommandLine commandLine = new GeneralCommandLine(command);
-                commandLine.addParameter(request);
-                commandLine.createProcess();
-            } catch (ExecutionException exception) {
-				Notifications.Bus.notify(new Notification(NOTIFICATION_DISPLAY_ID,
-						resourceBundle.getString("error.cannotexecute"),
-						exception.getLocalizedMessage(),
-						NotificationType.ERROR));
-				return;
-            }
+        String[] command = new String[] {
+				ExecUtil.getOpenCommandPath()
+		};
+        try {
+            final GeneralCommandLine commandLine = new GeneralCommandLine(command);
+            commandLine.addParameter(String.format("dash://%s%s", keyword, searchWord));
+            commandLine.createProcess();
+        } catch (ExecutionException exception) {
+			Notifications.Bus.notify(new Notification(NOTIFICATION_DISPLAY_ID,
+					resourceBundle.getString("error.cannotexecute"),
+					exception.getLocalizedMessage(),
+					NotificationType.ERROR));
         }
     }
 
