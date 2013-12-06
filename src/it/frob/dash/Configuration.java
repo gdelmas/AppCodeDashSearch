@@ -2,13 +2,11 @@ package it.frob.dash;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.ui.AddEditRemovePanel;
 import de.dreamlab.dash.KeywordLookup;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JComponent;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -16,19 +14,16 @@ import java.util.ResourceBundle;
  */
 public class Configuration implements Configurable {
 
+	/**
+	 * Localisable resources.
+	 */
 	private static ResourceBundle resourceBundle =
 			ResourceBundle.getBundle("it.frob.dash.Strings");
 
 	/**
-	 * Flag indicating whether the current mapping set has been modified by the
-	 * current configuration session.
+	 * Configuration panel instance.
 	 */
-	private boolean modified = false;
-
-	/**
-	 * Current mapping list.
-	 */
-	private List<DocsetMapping> mMappingList = KeywordLookup.getInstance().getList();
+	private ConfigurationPanel configurationPanel;
 
 	@Nls
 	@Override
@@ -46,55 +41,28 @@ public class Configuration implements Configurable {
 	@Nullable
 	@Override
 	public JComponent createComponent() {
-		AddEditRemovePanel<DocsetMapping> mainPanel = new AddEditRemovePanel<DocsetMapping>(new MappingTableModel(), mMappingList) {
-			@Nullable
-			@Override
-			protected DocsetMapping addItem() {
-				DocsetMapping docset = MappingEditorDialog.getMapping();
-				modified |= docset != null;
-				return docset;
-			}
-
-			@Override
-			protected boolean removeItem(DocsetMapping mappingEntry) {
-				if (mMappingList.contains(mappingEntry)) {
-					modified |= true;
-					mMappingList.remove(mappingEntry);
-					return true;
-				}
-
-				return false;
-			}
-
-			@Nullable
-			@Override
-			protected DocsetMapping editItem(DocsetMapping mappingEntry) {
-				DocsetMapping mapping = MappingEditorDialog.getMapping(
-						mappingEntry.getType(), mappingEntry.getDocset());
-				modified |= mapping != null;
-				return mapping;
-			}
-		};
-		mainPanel.getTable().setShowColumns(true);
-
-		return mainPanel;
+		configurationPanel = new ConfigurationPanel(
+				KeywordLookup.getInstance().getList());
+		return configurationPanel;
 	}
 
 	@Override
 	public boolean isModified() {
-		return modified;
+		return configurationPanel.isModified();
 	}
 
 	@Override
 	public void apply() throws ConfigurationException {
+		configurationPanel.clearModified();
 	}
 
 	@Override
 	public void reset() {
+		configurationPanel.setData(KeywordLookup.getInstance().getList());
+		configurationPanel.getTable().updateUI();
 	}
 
 	@Override
 	public void disposeUIResources() {
 	}
-
 }

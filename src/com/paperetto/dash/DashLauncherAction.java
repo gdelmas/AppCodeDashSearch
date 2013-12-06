@@ -20,6 +20,9 @@ import java.util.ResourceBundle;
 
 public class DashLauncherAction extends AnAction {
 
+	/**
+	 * Localisable resources.
+	 */
 	private static ResourceBundle resourceBundle =
 			ResourceBundle.getBundle("it.frob.dash.Strings");
 

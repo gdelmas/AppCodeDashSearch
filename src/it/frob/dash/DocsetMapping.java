@@ -4,6 +4,7 @@ package it.frob.dash;
  * Mapping class for docsets.
  */
 public class DocsetMapping {
+
 	/**
 	 * The type to map.
 	 */

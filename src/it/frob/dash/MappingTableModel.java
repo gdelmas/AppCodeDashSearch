@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
 class MappingTableModel extends TableModel<DocsetMapping> {
 
 	/**
-	 * Resource bundle.
+	 * Localisable resources.
 	 */
 	private static ResourceBundle resourceBundle =
 			ResourceBundle.getBundle("it.frob.dash.Strings");
