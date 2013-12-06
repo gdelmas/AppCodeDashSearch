@@ -57,7 +57,9 @@ class MappingEditorDialog extends DialogWrapper {
 	private MappingEditorDialog(String type, String docset) {
 		super(true);
 
-		setTitle(resourceBundle.getString("dialog.edit"));
+		setTitle("".equals(type) && "".equals(docset) ?
+				resourceBundle.getString("dialog.addnew") :
+				resourceBundle.getString("dialog.edit"));
 		setupUi(type, docset);
 	}
 
