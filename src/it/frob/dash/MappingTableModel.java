@@ -3,16 +3,26 @@ package it.frob.dash;
 import com.intellij.ui.AddEditRemovePanel.TableModel;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ResourceBundle;
+
 /**
  * Table model for IntelliJ's own Add/Edit/Delete table-based pane.
  */
 class MappingTableModel extends TableModel<DocsetMapping> {
-	// TODO: Localisation
+
+	/**
+	 * Resource bundle.
+	 */
+	private static ResourceBundle resourceBundle =
+			ResourceBundle.getBundle("it.frob.dash.Strings");
 
 	/**
 	 * Column names.
 	 */
-	private final String[] mColumnNames = new String[] { "Type", "Docset" };
+	private static final String[] COLUMN_NAMES = new String[] {
+			resourceBundle.getString("table.titles.type"),
+			resourceBundle.getString("table.titles.docset")
+	};
 
 	@Override
 	public int getColumnCount() {
@@ -22,34 +32,34 @@ class MappingTableModel extends TableModel<DocsetMapping> {
 	@Nullable
 	@Override
 	public String getColumnName(int index) {
-		return mColumnNames[index];
+		return COLUMN_NAMES[index];
 	}
 
 	@Override
-	public Object getField(DocsetMapping mappingEntry, int index) {
-		switch (index) {
+	public Object getField(DocsetMapping mappingEntry, int columnIndex) {
+		switch (columnIndex) {
 			case 0:
-				return mappingEntry.getEntry();
+				return mappingEntry.getType();
 
 			case 1:
 				return mappingEntry.getDocset();
 
 			default:
-				return null;
+				throw new IllegalArgumentException(
+						String.format("Unknown column index %d", columnIndex));
 		}
 	}
 
 	@Override
 	public boolean isEditable(int column) {
-		// TODO: Is a modal dialog needed here instead?
-		return true;
+		return false;
 	}
 
 	@Override
 	public void setValue(Object aValue, DocsetMapping data, int columnIndex) {
 		switch (columnIndex) {
 			case 0:
-				data.setEntry((String) aValue);
+				data.setType((String) aValue);
 				break;
 
 			case 1:
@@ -57,7 +67,8 @@ class MappingTableModel extends TableModel<DocsetMapping> {
 				break;
 
 			default:
-				break;
+				throw new IllegalArgumentException(
+						String.format("Unknown column index %d", columnIndex));
 		}
 	}
 }

@@ -9,17 +9,21 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JComponent;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Configuration entry point for the Dash plugin.
  */
 public class Configuration implements Configurable {
 
+	private static ResourceBundle resourceBundle =
+			ResourceBundle.getBundle("it.frob.dash.Strings");
+
 	/**
 	 * Flag indicating whether the current mapping set has been modified by the
 	 * current configuration session.
 	 */
-	private boolean mModified = false;
+	private boolean modified = false;
 
 	/**
 	 * Current mapping list.
@@ -29,7 +33,7 @@ public class Configuration implements Configurable {
 	@Nls
 	@Override
 	public String getDisplayName() {
-		return "Dash";
+		return resourceBundle.getString("panel.title");
 	}
 
 	@Nullable
@@ -46,14 +50,15 @@ public class Configuration implements Configurable {
 			@Nullable
 			@Override
 			protected DocsetMapping addItem() {
-				mModified = true;
-				return new DocsetMapping();
+				DocsetMapping docset = MappingEditorDialog.getMapping();
+				modified |= docset != null;
+				return docset;
 			}
 
 			@Override
 			protected boolean removeItem(DocsetMapping mappingEntry) {
 				if (mMappingList.contains(mappingEntry)) {
-					mModified = true;
+					modified |= true;
 					mMappingList.remove(mappingEntry);
 					return true;
 				}
@@ -64,7 +69,10 @@ public class Configuration implements Configurable {
 			@Nullable
 			@Override
 			protected DocsetMapping editItem(DocsetMapping mappingEntry) {
-				return mappingEntry;
+				DocsetMapping mapping = MappingEditorDialog.getMapping(
+						mappingEntry.getType(), mappingEntry.getDocset());
+				modified |= mapping != null;
+				return mapping;
 			}
 		};
 		mainPanel.getTable().setShowColumns(true);
@@ -74,7 +82,7 @@ public class Configuration implements Configurable {
 
 	@Override
 	public boolean isModified() {
-		return mModified;
+		return modified;
 	}
 
 	@Override

@@ -16,8 +16,12 @@ import de.dreamlab.dash.KeywordLookup;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ResourceBundle;
 
 public class DashLauncherAction extends AnAction {
+
+	private static ResourceBundle resourceBundle =
+			ResourceBundle.getBundle("it.frob.dash.Strings");
 
 	private final static String RUBY_FILE_IDENTIFIER = "Ruby";
 	private final static String NOTIFICATION_DISPLAY_ID = "Dash Notifications";
@@ -30,8 +34,9 @@ public class DashLauncherAction extends AnAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
-        e.getPresentation().setEnabled(PlatformDataKeys.EDITOR.getData(e.getDataContext()) != null);
+    public void update(AnActionEvent actionEvent) {
+        actionEvent.getPresentation().setEnabled(
+				PlatformDataKeys.EDITOR.getData(actionEvent.getDataContext()) != null);
     }
 
     private String getWordAtCursor(CharSequence editorText, int cursorOffset) {
@@ -101,9 +106,9 @@ public class DashLauncherAction extends AnAction {
             try {
                 searchWord = URLEncoder.encode(word, "UTF-8").replace("+", "%20");
             } catch (UnsupportedEncodingException exception) {
-				// TODO: Localisation
 				Notifications.Bus.notify(new Notification(NOTIFICATION_DISPLAY_ID,
-						"Unable to query Dash", exception.getLocalizedMessage(),
+						resourceBundle.getString("error.invalidencoding"),
+						exception.getLocalizedMessage(),
 						NotificationType.ERROR));
 				return;
             }
@@ -124,7 +129,8 @@ public class DashLauncherAction extends AnAction {
                 commandLine.createProcess();
             } catch (ExecutionException exception) {
 				Notifications.Bus.notify(new Notification(NOTIFICATION_DISPLAY_ID,
-						"Unable to query Dash", exception.getLocalizedMessage(),
+						resourceBundle.getString("error.cannotexecute"),
+						exception.getLocalizedMessage(),
 						NotificationType.ERROR));
 				return;
             }

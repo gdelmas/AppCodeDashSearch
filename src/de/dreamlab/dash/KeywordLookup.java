@@ -74,7 +74,7 @@ public class KeywordLookup {
 
 			// Really revolting hack but it gets the job done.
 			propertiesComponent.setValue(CONFIG_KEYWORDS,
-					DEFAULT_KEYWORDS.replace("JAVA=java;", "JAVA=android;"));
+					DEFAULT_KEYWORDS.replace("JAVA=java7;", "JAVA=android;"));
 		} else {
 			propertiesComponent.setValue(CONFIG_KEYWORDS, DEFAULT_KEYWORDS);
 		}

@@ -5,14 +5,14 @@ package it.frob.dash;
  */
 public class DocsetMapping {
 	/**
-	 * The entry to map.
+	 * The type to map.
 	 */
-	private String mEntry;
+	private String type;
 
 	/**
 	 * The associated docset.
 	 */
-	private String mDocset;
+	private String docset;
 
 	/**
 	 * Default constructor.
@@ -24,30 +24,30 @@ public class DocsetMapping {
 	/**
 	 * Specialised constructor for already known values.
 	 *
-	 * @param entry the entry to associate a docset to.
-	 * @param docset the docset to associate.
+	 * @param typeMapping the type to associate a docset to.
+	 * @param docsetMapping the docset to associate.
 	 */
-	public DocsetMapping(String entry, String docset) {
-		mEntry = entry;
-		mDocset = docset;
+	public DocsetMapping(String typeMapping, String docsetMapping) {
+		type = typeMapping;
+		docset = docsetMapping;
 	}
 
 	/**
-	 * Returns the mapped entry.
+	 * Returns the mapped type.
 	 *
-	 * @return the mapped entry.
+	 * @return the mapped type.
 	 */
-	public String getEntry() {
-		return mEntry;
+	public String getType() {
+		return type;
 	}
 
 	/**
-	 * Sets the mapped entry value.
+	 * Sets the mapped type.
 	 *
-	 * @param entry the entry to map.
+	 * @param typeMapping the type to map.
 	 */
-	public void setEntry(String entry) {
-		mEntry = entry;
+	public void setType(String typeMapping) {
+		type = typeMapping;
 	}
 
 	/**
@@ -56,15 +56,15 @@ public class DocsetMapping {
 	 * @return the associated docset.
 	 */
 	public String getDocset() {
-		return mDocset;
+		return docset;
 	}
 
 	/**
 	 * Sets the associated docset.
 	 *
-	 * @param docset the docset to associate.
+	 * @param docsetMapping the docset to associate.
 	 */
-	public void setDocset(String docset) {
-		mDocset = docset;
+	public void setDocset(String docsetMapping) {
+		docset = docsetMapping;
 	}
 }
