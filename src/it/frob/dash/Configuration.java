@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 /**
  * Configuration entry point for the Dash plugin.
  */
-public class Configuration implements Configurable {
+class Configuration implements Configurable {
 
 	/**
 	 * Localisable resources.

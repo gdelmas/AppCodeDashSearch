@@ -65,7 +65,7 @@ public class KeywordLookup {
         }
     }
 
-	public void resetDefaults() {
+	void resetDefaults() {
 		PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
 
 		// If it's Android Studio, use the Android docset instead of Java's.
@@ -81,7 +81,7 @@ public class KeywordLookup {
 	}
 
 	public void updateValues() {
-		StringBuffer outputValue = new StringBuffer();
+		StringBuilder outputValue = new StringBuilder();
 		for (Entry<String, String> type : typeMap.entrySet()) {
 			outputValue.append(String.format("%s=%s;", type.getKey(), type.getValue()));
 		}
@@ -103,7 +103,7 @@ public class KeywordLookup {
 		return list;
 	}
 
-	public TreeMap<String, String> getValues() {
+	TreeMap<String, String> getValues() {
 		TreeMap<String, String> output = new TreeMap<String, String>();
 		output.putAll(typeMap);
 		output.putAll(extensionMap);
