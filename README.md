@@ -42,3 +42,7 @@ Older IDE versions like **AppCode 1.x** are not supported anymore. Please manual
 
 ###### In rare conditions the installation from the repositories does not work
 It looks like there is an IntelliJ/Java bug with OS X Mavericks which prevents to install plugins from the repositories. Please install the plugin manually from [here](https://github.com/gdelmas/IntelliJDashPlugin/releases). For additional information check [issue #13](https://github.com/gdelmas/IntelliJDashPlugin/issues/13).
+
+###### IntelliJ says "Failed to open dash-plugin://..." on Windows
+Run **zeal.exe --register**.
+
