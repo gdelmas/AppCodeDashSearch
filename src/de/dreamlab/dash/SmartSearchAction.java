@@ -15,7 +15,7 @@ public class SmartSearchAction extends AbstractMenuAction {
     {
         title = "Smart-Search Documentation";
         description = "Searches word under caret or selection in documentation filtered by currently used language";
-        iconFilename = "dash.png";
+        iconFilename = "smartdash.png";
     }
 
     public void actionPerformed(AnActionEvent e) {

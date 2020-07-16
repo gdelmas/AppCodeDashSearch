@@ -11,6 +11,7 @@ public class SearchAction extends AbstractMenuAction {
     {
         title = "Search all Documentation";
         description = "Searches word under caret or selection in documentation";
+        iconFilename = "dash.png";
     }
 
     public void actionPerformed(AnActionEvent e) {
